@@ -8,12 +8,10 @@ class HandDetector:
 
     def __init__(self):
 
-        # Model path
         base_options = python.BaseOptions(
             model_asset_path="models/hand_landmarker.task"
         )
 
-        # Detector configuration
         options = vision.HandLandmarkerOptions(
             base_options=base_options,
             num_hands=1,
@@ -22,7 +20,6 @@ class HandDetector:
             min_tracking_confidence=0.5
         )
 
-        # Create detector
         self.detector = vision.HandLandmarker.create_from_options(
             options
         )
@@ -31,17 +28,18 @@ class HandDetector:
     def detect(self, frame):
 
         """
-        Receives an RGB image and returns
-        the hand landmarks.
+        Detects the hand landmarks and handedness.
+
+        Returns:
+            hand_landmarks
+            handedness
         """
 
-        # Convert the OpenCV frame to a MediaPipe image
         mp_image = mp.Image(
             image_format=mp.ImageFormat.SRGB,
             data=frame
         )
 
-        # Detect
         result = self.detector.detect(mp_image)
 
-        return result.hand_landmarks
+        return result.hand_landmarks, result.handedness
